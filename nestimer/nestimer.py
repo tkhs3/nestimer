@@ -2,6 +2,7 @@ import statistics
 import timeit
 import re
 
+
 class timer(object):
 
     dict_duration = {}
@@ -140,7 +141,9 @@ class timer(object):
 
 def capture(name=None,
             n_digit=3,
-            flg_share_path_block=True):
+            flg_share_path_block=True,
+            name_obj_timer=None
+):
     """record execution time for functions, 
         please use as a decorator
            
@@ -160,6 +163,9 @@ def capture(name=None,
                     its useful to track time in nested structure.
                     take care when use both shared block path and multi threading.
                     it may fail to track nested structure.
+                name_obj_timer
+                    str
+                    symbol name for referencing nestimer.timer instance inside the function.
     """
 
     def _capture(function, *args, **kwargs):
@@ -173,10 +179,18 @@ def capture(name=None,
             else:
                 name_block = name
 
+            
             # start recording
             with timer(name=name_block, n_digit=n_digit, flg_share_path_block=flg_share_path_block) as t :
                 # execute functions
-                result = function(*args, **kwargs)
+                if name_obj_timer is None:
+                    result = function(*args, **kwargs)
+                else:
+                    _dict = {name_obj_timer : t}
+                    kwargs.setdefault(name_obj_timer, None)
+                    kwargs.pop(name_obj_timer)
+                    result = function(*args, **kwargs, **_dict)
+                    
                 return result
 
         return _func
