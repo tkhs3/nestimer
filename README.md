@@ -174,7 +174,7 @@ measuring/recording code execution time in nested structure
  
         import nestimer
         import time
-
+    
         timer = nestimer.timer(name="this name is recorded as entry")
         timer.enter_block()
         time.sleep(1)
